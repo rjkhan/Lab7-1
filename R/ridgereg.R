@@ -21,10 +21,11 @@ ridgereg <- setRefClass("ridgereg",
                           .self$lambda <- lambda
                           .self$dataname <- deparse(substitute(data))
                           X <- model.matrix(formula,data)
+                          X <- X[,-1,drop=FALSE]
                           
                           # We decide to use the sample variance var() built into R for V(X)
                           
-                          for(i in 2:ncol(X)){
+                          for(i in 1:ncol(X)){
                             X[,i] <- (X[,i] - mean(X[,i])) / sqrt(var(X[,i]))
                           }
                           
@@ -33,6 +34,7 @@ ridgereg <- setRefClass("ridgereg",
                           
                           formulanames <- all.vars(formula)
                           y <- data[,which(names(data) == formulanames[1])]
+                          y <- y - mean(y)
                           ystar <- c(y, rep(0, ncol(X)))
                           qrextar <- qr(Xstar)
                           
@@ -72,7 +74,7 @@ ridgereg <- setRefClass("ridgereg",
                         predict = function(newframe=NULL){
                           "Returns the predicted values of the linear model."
                           if(length(newframe) != 0){
-                            return(cbind(rep(1,length(newframe)),as.matrix(newframe)) %*% .self$coefficients)
+                            return(as.matrix(newframe) %*% .self$coefficients)
                           }
                           return(.self$predicted[,1,drop=FALSE])
                         }
