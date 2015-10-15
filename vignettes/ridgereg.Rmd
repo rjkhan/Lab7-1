@@ -31,25 +31,33 @@ The `html_vignette` template includes a basic CSS theme. To override this theme 
 
 The figure sizes have been customised so that you can easily put two images side-by-side. 
 
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r,message=FALSE,echo=FALSE}
+library(Lab7)
+library(caret)
+library(mlbench)
+data(BostonHousing)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+```{r, echo=FALSE}
+inTrain <- createDataPartition(y=BostonHousing$crim,
+                               p=.90,
+                               list=FALSE)
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+training <- BostonHousing[inTrain,]
+testing <- BostonHousing[-inTrain,]
 
-## More Examples
+lmfit <- train(crim ~.,
+               data = training,
+               method ="lm",
+               preProc = c("center","scale"))
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+lmforwardfit <- train(crim ~.,
+               data = training,
+               method ="leapForward",
+               preProc = c("center","scale"))
 
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+str(lmfit)
 ```
 
 Also a quote using `>`:
