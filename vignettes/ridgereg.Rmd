@@ -9,58 +9,54 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
-
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
-
-## Vignette Info
-
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
+Here we fit a linear regression model and a linear regression model with forward selection of covariates
+on the training dataset. 
 
 ```{r,message=FALSE,echo=FALSE}
 library(Lab7)
 library(caret)
 library(mlbench)
+library(leaps)
 data(BostonHousing)
+BostonHousing$chas <- as.numeric(BostonHousing$chas)-1
+
 ```
 
 
 ```{r, echo=FALSE}
-inTrain <- createDataPartition(y=BostonHousing$crim,
-                               p=.90,
+inTrain <- createDataPartition(BostonHousing$crim,
+                               p=.75,
                                list=FALSE)
 
 training <- BostonHousing[inTrain,]
 testing <- BostonHousing[-inTrain,]
 
-lmfit <- train(crim ~.,
-               data = training,
-               method ="lm",
-               preProc = c("center","scale"))
+ctrl <- trainControl(
+  method = "repeatedcv",
+  number = 10)
+  
 
-lmforwardfit <- train(crim ~.,
+set.seed(4587)
+lmfit <- train(crim ~ . ,
                data = training,
-               method ="leapForward",
-               preProc = c("center","scale"))
-
-str(lmfit)
+               method ="lm"
+)
+lmfit
 ```
 
-Also a quote using `>`:
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```{r,echo=FALSE}
+set.seed(4587)
+lmGrid <-  expand.grid(nvmax=1:(ncol(training)-1))
+lmforwardfit <- train(crim ~.,
+                      data = training,
+                      method ="leapForward",
+                      #preProc = c("center","scale"),
+                      tuneGrid = lmGrid
+)
+lmforwardfit
+
+```
+
+We see that the best RMSE value usually comes from the linear regression model with forward selection where there are between two and 12 predictors. This RMSE value is usually a little better than the one from the regular linear regression model.
+

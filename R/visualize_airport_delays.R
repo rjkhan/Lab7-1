@@ -1,3 +1,12 @@
+#' A function which data munges nycflights13 and plots the mean arrival delays
+#' of airports.
+#' 
+#' This function data munges nycflights13 and generates a plot with mean arrival
+#' delays at different airports.
+#' 
+#' @return p A ggplot object of mean arrival delays of flights from New York to
+#'   cities outside NYC.
+
 visualize_airport_delays <- function(){
   a <- select(flights, one_of(c("dep_delay", "arr_delay", "origin", "dest")))
   b <- select(airports, one_of(c("faa", "lat", "lon")))
