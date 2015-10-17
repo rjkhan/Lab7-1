@@ -20,6 +20,8 @@ lmfit <- train(crim ~ . ,
                method ="lm"
 )
 lmfit
+################
+
 lmGrid <-  expand.grid(nvmax=1:(ncol(training)-1))
 
 lmforwardfit <- train(crim ~.,
@@ -29,6 +31,9 @@ lmforwardfit <- train(crim ~.,
                       tuneGrid = lmGrid
 )
 lmforwardfit
+
+#################
+
 ridgemodel <- list(type = "Regression",
               library = "Lab7"
               )
@@ -81,13 +86,17 @@ ridgemodel$sort<-function (x) x[order(-x$lambda), ]
 ridgemodel$label<-"Ridge Regression"
 
 ridgemodel$grid<-function(x,y,len=NULL, search="grid"){
-  data.frame(lambda=c(0, 1, 2))
+  data.frame(lambda=c( 1))
 }
 
-ridgeFit <- caret::train(y= training$crim,
-                                 x= training, 
+ridgeFit <- caret::train(y = training$crim,
+                         x = training,
                        method = ridgemodel,
                        trControl = ctrl
 )
 ridgeFit
+
+####################################
+
+
 

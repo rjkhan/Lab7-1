@@ -101,11 +101,18 @@ ridgereg <- setRefClass("ridgereg",
           #stopifnot(is.data.frame(newframe) | is.matrix(newframe))
           #stopifnot(ncol(newframe) == (length(.self$coefficients)))
           
+          
+          responsename <- as.character(.self$formula)[2]
+          
+          newframe <-newframe[,-which(names(newframe) == responsename)]
+          
           newframe <- as.matrix(newframe)
           
           for(i in 1:ncol(newframe)){
             newframe[,i] <- (newframe[,i] - mean(newframe[,i])) / sqrt(var(newframe[,i]))
           }
+          print(dim(newframe))
+          print(length(.self$coefficients))
           return(as.vector( newframe %*% .self$coefficients))
         }
           return(.self$predicted[,1])
