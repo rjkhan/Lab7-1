@@ -34,7 +34,7 @@ returns something relevant.
 \item{\code{coefficients}}{A single column matrix consisting of the calculated
   regression coefficients of the linear model.}
 
-\item{\code{predicted}}{A single column matrix containing the linearly predicted
+\item{\code{predicted}}{A vector containing the linearly predicted
   response.}
 }}
 \section{Methods}{

@@ -1,5 +1,4 @@
-library(caret)
-library(mlbench)
+
 data(BostonHousing)
 BostonHousing$chas <- as.numeric(BostonHousing$chas)-1
 inTrain <- createDataPartition(BostonHousing$crim,
@@ -89,12 +88,12 @@ ridgemodel$grid<-function(x,y,len=NULL, search="grid"){
   data.frame(lambda=c( 1))
 }
 
-ridgeFit <- caret::train(y = training$crim,
-                         x = training,
-                       method = ridgemodel,
-                       trControl = ctrl
-)
-ridgeFit
+# ridgeFit <- caret::train(y = training$crim,
+#                          x = training,
+#                        method = ridgemodel,
+#                        trControl = ctrl
+# )
+# ridgeFit
 
 ####################################
 
