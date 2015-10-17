@@ -2,7 +2,7 @@ Package: Lab7
 Type: Package
 Title: Ridge regression and data munging package
 Version: 1.0.0
-Date: 2015-10-10
+Date: 2015-10-17
 Authors@R: c(
     person("Andrea", "Bruzzone", email = "andrea.bruzzone92@gmail.com", role = c("aut")),
     person("Thomas", "Zhang", email = "thomaszhangswe@gmail.com", role = c("aut", "cre"))

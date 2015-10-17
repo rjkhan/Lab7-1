@@ -25,7 +25,7 @@
 #'   regression coefficients of the linear model.
 #'   
 #'   
-#' @field predicted A single column matrix containing the linearly predicted 
+#' @field predicted A vector containing the linearly predicted 
 #'   response.
 #'   
 #'   
@@ -43,13 +43,9 @@ ridgereg <- setRefClass("ridgereg",
         dataname = "character",
         lambda = "numeric",
         coefficients = "matrix",
-#       residual = "matrix",
+
         predicted = "matrix"),
-#       df = "integer",
-#       residualvar = "numeric",
-#       varregcoefficients = "matrix",
-#       tvalues = "matrix",
-#       pvalues = "matrix"),
+
                       
     methods = list(
         initialize = function(formula, data, lambda ){
@@ -74,12 +70,7 @@ ridgereg <- setRefClass("ridgereg",
         qrextar <- qr(Xstar)
         .self$coefficients <- solve(qr.R(qrextar)) %*% t(qr.Q(qrextar)) %*% ystar
         .self$predicted <- X %*% .self$coefficients
-#       .self$residual <- y -  .self$predicted
-#       .self$df <- dim(data)[1] - dim(X)[2]
-#       .self$residualvar <- sum(.self$residual * .self$residual) / .self$df
-#       .self$varregcoefficients <-.self$residualvar * solve(t(X) %*% X)
-#       .self$tvalues <- .self$coefficients / sqrt(diag(.self$varregcoefficients))
-#       .self$pvalues <- 2 * (1 - pt(abs(.self$tvalues),.self$df))    
+  
         },
         print = function(){
         "Gives a printout of the call as well as the calculated regression coefficients."
@@ -105,9 +96,19 @@ ridgereg <- setRefClass("ridgereg",
      "Returns the predicted values of the linear model. Can also take a new data.frame
      with covariate values and make new prediction based on them."
         if(length(newframe) != 0){
-          return(as.matrix(newframe) %*% .self$coefficients)
+          
+          #these dont seem to work when called from train() 
+          #stopifnot(is.data.frame(newframe) | is.matrix(newframe))
+          #stopifnot(ncol(newframe) == (length(.self$coefficients)))
+          
+          newframe <- as.matrix(newframe)
+          
+          for(i in 1:ncol(newframe)){
+            newframe[,i] <- (newframe[,i] - mean(newframe[,i])) / sqrt(var(newframe[,i]))
+          }
+          return(as.vector( newframe %*% .self$coefficients))
         }
-          return(.self$predicted[,1,drop=FALSE])
+          return(.self$predicted[,1])
         }
                         
     )
