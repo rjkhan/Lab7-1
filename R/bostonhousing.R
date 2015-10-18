@@ -68,14 +68,15 @@ Fit<-function(x,y,lambda,param,lev,last,classProbs,...){
   }
   
   formula <- as.formula(formula)
-  model <- Lab7::ridgereg( formula = formula, data=dat,lambda= param$lambda)
+  model <- Lab7::ridgeregr( formula = formula, data=dat,lambda= param$lambda)
+  return(model)
 }
 
 ridgemodel$fit<-Fit
 
 ridgemodel$predict<-function(modelFit, newdata, preProc = NULL, submodels = NULL){
 
-  predvalues <- modelFit$predict(newdata)
+  predict(modelFit,newdata)
 }
 
 ridgemodel$prob<- list(NULL)
@@ -85,17 +86,38 @@ ridgemodel$sort<-function (x) x[order(-x$lambda), ]
 ridgemodel$label<-"Ridge Regression"
 
 ridgemodel$grid<-function(x,y,len=NULL, search="grid"){
-  data.frame(lambda=c( 1))
+  data.frame(lambda=seq(from=0, to=200, by=10))
 }
 
-# ridgeFit <- caret::train(y = training$crim,
-#                          x = training,
-#                        method = ridgemodel,
-#                        trControl = ctrl
-# )
-# ridgeFit
+set.seed(-274819L)
+ridgeFit <- caret::train( y = training$crim,
+                         x = training,
+                       method = ridgemodel,
+                       trControl = ctrl
+)
+ridgeFit
 
 ####################################
 
+lm_testeval <-predict(lmfit,testing)
 
+lm_testres <- testing$crim - lm_testeval
 
+plot(lmtestres)
+qqnorm(lmtestres)
+qqline(lmtestres)
+lmfor_testeval <-predict(lmforwardfit,testing)
+
+lmfor_testres <- testing$crim - lmfor_testeval
+
+plot(lmfor_testres)
+qqnorm(lmfor_testres)
+qqline(lmfor_testres)
+
+ridge_testeval <- predict(ridgeFit,testing)
+
+ridge_testres <- testing$crim - mean(testing$crim) - ridge_testeval
+
+plot(ridge_testres)
+qqnorm(ridge_testres)
+qqline(ridge_testres)

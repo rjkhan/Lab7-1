@@ -1,5 +1,3 @@
-
-
 ridgeregr <- function(formula, data, lambda = 0){
   
   X <- model.matrix(formula,data)
@@ -12,6 +10,9 @@ ridgeregr <- function(formula, data, lambda = 0){
   Xmodif <- sqrt(lambda) * diag(ncol(X))
   Xstar <- rbind(X,Xmodif)
   formulanames <- all.vars(formula)
+  
+  respname <- formulanames[1]
+  
   y <- data[,which(names(data) == formulanames[1])]
   y <- y - mean(y)
   ystar <- c(y, rep(0, ncol(X)))
@@ -22,7 +23,7 @@ ridgeregr <- function(formula, data, lambda = 0){
   predvalues <- X %*% betavalues
   
   dataname <- deparse(substitute(data))
-  ridgereg_list <- list(formula = formula, data=data, dataname=dataname,
+  ridgereg_list <- list(formula = formula, data=data, dataname=dataname,respname=respname,
                         X=X, y=y, betavalues = betavalues, predvalues= predvalues)
   ridgereg_object <- structure(ridgereg_list, class="ridgeregr")
   
