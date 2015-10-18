@@ -10,7 +10,7 @@ vignette: >
 ---
 
 Here we fit a linear regression model and a linear regression model with forward selection of covariates
-on the training dataset. 
+on the training dataset.
 
 ```{r,message=FALSE,echo=FALSE}
 library(Lab7)
@@ -24,6 +24,7 @@ BostonHousing$chas <- as.numeric(BostonHousing$chas)-1
 
 
 ```{r, echo=FALSE}
+set.seed(-264619L)
 inTrain <- createDataPartition(BostonHousing$crim,
                                p=.75,
                                list=FALSE)
@@ -36,7 +37,7 @@ ctrl <- trainControl(
   number = 10)
   
 
-set.seed(-264819L)
+set.seed(-264619L)
 lmfit <- train(crim ~ . ,
                data = training,
                method ="lm"
@@ -46,19 +47,17 @@ lmfit
 
 
 ```{r,echo=FALSE}
-set.seed(-264819L)
-lmGrid <-  expand.grid(nvmax=1:(ncol(training)-1))
+set.seed(-264619L)
 lmforwardfit <- train(crim ~.,
                       data = training,
-                      method ="leapForward",
-                      #preProc = c("center","scale"),
-                      tuneGrid = lmGrid
+                      method ="leapForward"
+                      
 )
 lmforwardfit
 
 ```
 
-We see that the best RMSE value usually comes from the linear regression model with forward selection where there are between two and 12 predictors. This RMSE value is usually a little better than the one from the regular linear regression model. We now try to train our own custom made ridge regression model with a particular set.seed().
+We see that the best RMSE value comes from the linear regression model with forward selection where there are two predictors. This RMSE value is a little better than the one from the regular linear regression model. We now try to train our own custom made ridge regression model with a particular set.seed().
 
 ```{r,warning=FALSE}
 ridgemodel <- list(type = "Regression",
@@ -118,7 +117,7 @@ ridgemodel$grid<-function(x,y,len=NULL, search="grid"){
              lambda=seq(from=0, to=200, by=10))
 }
 
-set.seed(-264819L)
+set.seed(-264619L)
 ridgeFit <- caret::train( y = training$crim,
                          x = training,
                        method = ridgemodel,
@@ -134,32 +133,32 @@ ridgeFit
 
 ```
 
-Preprocessing of data is actually done inside the ridgeregr() function. It seems that based on mimimal RMSE value, parameter lambda wants to be around 40. This value changes a little each time we knit the .rmd document, despite the set.seed(). Now we evaluate all three models on the test dataset.
+Preprocessing of data is actually done inside the ridgeregr() function. It seems that based on mimimal RMSE value, parameter lambda wants to be around 60. Now we evaluate all three models on the test dataset. Outlier residuals not shown in graphs.
 
 ```{r,echo=FALSE,fig.height=4,fig.width=7}
 lm_testeval <-predict(lmfit,testing)
 
 lm_testres <- testing$crim - lm_testeval
 
-plot(lm_testres,main="Residuals for the linear regression predictions over test data",
+plot(lm_testres, ylim= c(-5,5), main="Residuals for the linear regression predictions over test data",
      ylab="residual",xlab="test data observation #")
 paste0("RSS = ",sum(lm_testres^2))
 lmfor_testeval <-predict(lmforwardfit,testing)
 
 lmfor_testres <- testing$crim - lmfor_testeval
 
-plot(lmfor_testres,main=c("Residuals for the linear regression with"," forward selection predictions over test data"),
+plot(lmfor_testres, ylim= c(-5,5), main=c("Residuals for the linear regression with"," forward selection predictions over test data"),
      ylab="residual",xlab="test data observation #")
 paste0("RSS = ",sum(lmfor_testres^2))
 ridge_testeval <- predict(ridgeFit,testing)
 
 ridge_testres <- testing$crim - mean(testing$crim) - ridge_testeval
 
-plot(ridge_testres,main="Residuals for the ridge regression predictions over test data",
+plot(ridge_testres, ylim= c(-5,5), main="Residuals for the ridge regression predictions over test data",
      ylab="residual",xlab="test data observation #")
 paste0("RSS = ",sum(ridge_testres^2))
 #The final models can be found under (train obj)$finalModel 
 ```
 
-It seems the ridge regression is a better fit than linear regression or linear regression with forward selection based on RSS.
+It seems that ridge regression is a better fit than linear regression or linear regression with forward selection based on RSS.
 

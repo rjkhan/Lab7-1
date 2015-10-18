@@ -21,13 +21,12 @@ lmfit <- train(crim ~ . ,
 lmfit
 ################
 
-lmGrid <-  expand.grid(nvmax=1:(ncol(training)-1))
+#lmGrid <-  expand.grid(nvmax=1:(ncol(training)-1))
 
 lmforwardfit <- train(crim ~.,
                       data = training,
-                      method ="leapForward",
-                      #preProc = c("center","scale"),
-                      tuneGrid = lmGrid
+                      method ="leapForward"
+                      
 )
 lmforwardfit
 
@@ -90,12 +89,16 @@ ridgemodel$grid<-function(x,y,len=NULL, search="grid"){
 }
 
 set.seed(-274819L)
-ridgeFit <- caret::train( y = training$crim,
-                         x = training,
-                       method = ridgemodel,
-                       trControl = ctrl
-)
-ridgeFit
+
+#ridgeFit does not want to build like this so I comment it. Just uncomment
+#and run it. It works well in ridgereg.rmd
+
+# ridgeFit <- caret::train( y = training$crim,
+#                          x = training,
+#                        method = ridgemodel,
+#                        trControl = ctrl
+# )
+# ridgeFit
 
 ####################################
 
@@ -103,9 +106,9 @@ lm_testeval <-predict(lmfit,testing)
 
 lm_testres <- testing$crim - lm_testeval
 
-plot(lmtestres)
-qqnorm(lmtestres)
-qqline(lmtestres)
+plot(lm_testres)
+qqnorm(lm_testres)
+qqline(lm_testres)
 lmfor_testeval <-predict(lmforwardfit,testing)
 
 lmfor_testres <- testing$crim - lmfor_testeval
@@ -114,10 +117,10 @@ plot(lmfor_testres)
 qqnorm(lmfor_testres)
 qqline(lmfor_testres)
 
-ridge_testeval <- predict(ridgeFit,testing)
-
-ridge_testres <- testing$crim - mean(testing$crim) - ridge_testeval
-
-plot(ridge_testres)
-qqnorm(ridge_testres)
-qqline(ridge_testres)
+# ridge_testeval <- predict(ridgeFit,testing)
+# 
+# ridge_testres <- testing$crim - mean(testing$crim) - ridge_testeval
+# 
+# plot(ridge_testres)
+# qqnorm(ridge_testres)
+# qqline(ridge_testres)

@@ -20,7 +20,7 @@ A method that prints out the fitted values of the ridge regression model, possib
 \examples{
 a <- ridgeregr(Petal.Length~Sepal.Width+Sepal.Length, data=iris, lambda=10)
 predict(a) # The fitted values
-df <- data.frame(x1=runif(n = 150, min = -1.5, max = 1.5), x2=runif(n = 150, min = -2, max = 2.5) )
+df <- data.frame(Petal.Length=runif(n = 150, min = -1.5, max = 1.5), x2=runif(n = 150, min = -2, max = 2.5),x3 = runif(n = 150, min = -1.5, max = 1.5) )
 predict(x=a, x_values = df) # Predicted on the new x-values in the df data.frame.
 }
 \seealso{
