@@ -17,13 +17,7 @@ Imports:
     mlbench,
     leaps,
     mapproj  
-Depends: R (>= 3.1.0),
-    dplyr,
-    caret,
-    nycflights13,
-    mlbench,
-    leaps,
-    mapproj
+Depends: R (>= 3.1.0)
 Suggests: knitr,
     testthat,    
 VignetteBuilder: knitr
