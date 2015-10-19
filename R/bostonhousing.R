@@ -1,21 +1,22 @@
-# If you want to run anything here, first run everything 
-# in libraries.R and then uncomment whatever you want to run here.
+# If you wish to run anything in this file
+# please run the file libraries.R first
+#
 # data(BostonHousing)
 # BostonHousing$chas <- as.numeric(BostonHousing$chas)-1
-# inTrain <- caret::createDataPartition(BostonHousing$crim,
+# inTrain <- createDataPartition(BostonHousing$crim,
 #                                p=.75,
 #                                list=FALSE)
 # 
 # training <- BostonHousing[inTrain,]
 # testing <- BostonHousing[-inTrain,]
 # 
-# ctrl <- caret::trainControl(
+# ctrl <- trainControl(
 #   method = "repeatedcv",
 #   number = 10)
 #   
 # 
 # set.seed(4587)
-# lmfit <- caret::train(crim ~ . ,
+# lmfit <- train(crim ~ . ,
 #                data = training,
 #                method ="lm"
 # )
@@ -24,14 +25,12 @@
 # 
 # #lmGrid <-  expand.grid(nvmax=1:(ncol(training)-1))
 # 
-# lmforwardfit <- caret::train(crim ~.,
+# lmforwardfit <- train(crim ~.,
 #                       data = training,
 #                       method ="leapForward"
 #                       
-#                       
 # )
 # lmforwardfit
-# 
 # 
 # #################
 # 
@@ -93,8 +92,8 @@
 # 
 # set.seed(-274819L)
 # 
-# #ridgeFit does not want to build like this so I comment it. Just uncomment
-# #and run it. It works well in ridgereg.rmd
+# ridgeFit does not want to build like this so I comment it. Just uncomment
+# and run it. It works well in ridgereg.rmd
 # 
 # ridgeFit <- caret::train( y = training$crim,
 #                          x = training,

@@ -85,7 +85,7 @@ ridgereg <- setRefClass("ridgereg",
         writeLines(c(calline,"","Coefficients:"))
           return( readout )
         },
-        coef = function(){
+        coeff = function(){
      "Returns a named vector of the regression coefficients in the linear model." 
         readout <- as.vector(.self$coefficients)
         coefnames <- rownames(.self$coefficients)
@@ -93,8 +93,9 @@ ridgereg <- setRefClass("ridgereg",
           return(readout)
         },
         predict = function(newframe=NULL){
-     "Returns the predicted values of the linear model. Can also take a new data.frame
-     with covariate values and make new prediction based on them."
+     "Returns the predicted values of the linear model. Can also take a new NAMED data.frame
+     with covariate values and make new prediction based on them. New NAMED data frame must have same
+    column order as the data frame in field data."
         if(length(newframe) != 0){
           
           #these dont seem to work when called from train() 
@@ -104,15 +105,17 @@ ridgereg <- setRefClass("ridgereg",
           
           responsename <- as.character(.self$formula)[2]
           
-          newframe <-newframe[,-which(names(newframe) == responsename)]
+          if( responsename %in% names(newframe)){
+            newframe <- newframe[,-which(names(newframe) == responsename)]
+          }
           
           newframe <- as.matrix(newframe)
           
           for(i in 1:ncol(newframe)){
             newframe[,i] <- (newframe[,i] - mean(newframe[,i])) / sqrt(var(newframe[,i]))
           }
-          print(dim(newframe))
-          print(length(.self$coefficients))
+          #print(dim(newframe))
+          #print(length(.self$coefficients))
           return(as.vector( newframe %*% .self$coefficients))
         }
           return(.self$predicted[,1])
