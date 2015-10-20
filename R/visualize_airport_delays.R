@@ -6,8 +6,16 @@
 #' 
 #' @return p A ggplot object of mean arrival delays of flights from New York to
 #'   cities outside NYC.
+#' @export 
+
 
 visualize_airport_delays <- function(){
+  library(dplyr)
+  library(ggplot2)
+  library(mapproj)
+  library(plyr)
+  library(nycflights13)
+  
   a <- select(flights, one_of(c("dep_delay", "arr_delay", "origin", "dest")))
   b <- select(airports, one_of(c("faa", "lat", "lon")))
   k <- filter(b,faa %in% c(unique(a$dest)))
@@ -18,11 +26,14 @@ visualize_airport_delays <- function(){
   dep_ewr <- summarise(ewr, dep_ewr = mean(dep_delay))
   dep_lga <- summarise(lga, dep_lga = mean(dep_delay))
   
-  arrivaldelays <- flights %>% filter(!is.na(arr_delay)) %>% group_by(dest) %>% 
-    summarize(avg=mean(arr_delay))
+  arrivaldelays <- select(flights, one_of(c("arr_delay", "dest")))
+  arrivaldelays <- filter(arrivaldelays, !is.na(arr_delay)) 
+  
+  arrivaldelays4 <- dplyr::summarise(dplyr::group_by(arrivaldelays, dest),  avg=mean(arr_delay, na.rm = TRUE))
+  
   # it seems like in the data with latitude and longitude there aren't some airports that can be found in arrivaldelays
-  k1 <- rename(k, dest = faa)
-   papa <- inner_join(k1, arrivaldelays, by = "dest")
+  k1 <- rename(k, replace = c("faa" = "dest"))
+  papa <- inner_join(k1,  arrivaldelays4, by = "dest")
   
   all_states <- map_data("state")
   
